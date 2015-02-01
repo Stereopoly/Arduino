@@ -164,24 +164,27 @@ void loop(void)
           client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
           client.println("<meta http-equiv=\"refresh\" content=\"2\">");
           client.println("<link rel='stylesheet' type='text/css' href='http://randomnerdtutorials.com/ethernetcss.css' />");
-          client.println("<SCRIPT>");
+          client.println("<style>");
           client.println("body {");
           client.println("background-color: lightblue;");
           client.println(" }");
-          client.println("</SCRIPT>");
+          client.println("</style>");
           client.println("<TITLE>Home Automation</TITLE>");
           client.println("</HEAD>");
           client.println("<BODY>");
           client.println("<H1>Home Control System</H1>");
           client.println("<H3>Wait a second before pressing a button again</H3>");
           client.println("<hr />");
+          client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
           client.println("<br />");  
+          client.println("Door is: ");
+          client.println(doorStatus);    
           client.println("<br />");  
-          client.println("<a href=\"/?button1on\"\">Turn On LED</a>");
-          client.println("<a href=\"/?button1off\"\">Turn Off LED</a><br />");   
-          client.println("<br />");     
-          client.println("LED is: ");
-          client.println(ledOnOff);
+ //         client.println("<a href=\"/?button1on\"\">Turn On LED</a>");
+  //        client.println("<a href=\"/?button1off\"\">Turn Off LED</a><br />");   
+  //        client.println("<br />");     
+   //       client.println("LED is: ");
+   //       client.println(ledOnOff);
           client.println("<br />");
           client.println("<br />");
           client.println("<a href=\"/?button2on\"\">Relay On</a>");
@@ -191,10 +194,11 @@ void loop(void)
           client.println(onOff);
           client.println("<br />");
           client.println("<br />");
-          client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
-          client.println("<br />");
-          client.println("Door is: ");
-          client.println(doorStatus);    
+ //         client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
+//          client.println("<a href=\"/?button3off\"\">Check Door Status</a><br />");
+  //        client.println("<br />");
+  //        client.println("Door is: ");
+   //       client.println(doorStatus);    
           client.println("<p>Created by Oscar Bjorkman</p>");  
           client.println("<br />"); 
           client.println("</BODY>");
@@ -204,20 +208,20 @@ void loop(void)
           //stopping client
           client.stop();
           //controls the Arduino if you press the buttons
-          if (readString.indexOf("?button1on") >0){
-            messageToBeSent = 1;
-            ledOnOff = "On";
-            printf("LED ON Pressed \n");
-            printf("To be sent: %i", messageToBeSent);
-            to = 02;
-          }
-          if (readString.indexOf("?button1off") >0){
-            messageToBeSent = 0;
-            ledOnOff = "Off";
-            printf("LED OFF Pressed \n");
-            printf("To be sent: %i", messageToBeSent);
-            to = 02;
-          }
+ //         if (readString.indexOf("?button1on") >0){
+ //           messageToBeSent = 1;
+ //           ledOnOff = "On";
+ //           printf("LED ON Pressed \n");
+ //           printf("To be sent: %i", messageToBeSent);
+ //           to = 02;
+ //         }
+ //         if (readString.indexOf("?button1off") >0){
+ //           messageToBeSent = 0;
+ //           ledOnOff = "Off";
+ //           printf("LED OFF Pressed \n");
+ //           printf("To be sent: %i", messageToBeSent);
+ //           to = 02;
+  //        }
           // Relay control
           if (readString.indexOf("?button2on") >0){
             digitalWrite(relay, HIGH);      // sends power to relay which creates circuit
@@ -233,7 +237,14 @@ void loop(void)
             onOff = "Off";
             to = 05;
           }
+          if (readString.indexOf("?button3") >0){
+            messageToBeSent = 9;
+            to = 02;
+              Serial.println("Check Door");
+          }
           //clearing string for next read
+          delay(50);
+          
           readString=""; 
 
 //          // door status
