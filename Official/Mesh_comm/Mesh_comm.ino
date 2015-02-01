@@ -87,16 +87,21 @@ void handle_T(RF24NetworkHeader& header);
 void handle_N(RF24NetworkHeader& header);
 void add_node(uint16_t node);
 
+#define trigPin 6
+#define echoPin 5
+
 void setup(void)
 {
-  
+
   // Port setup  
   pinMode(4, OUTPUT);
   pinMode(relay, OUTPUT);
   digitalWrite(4, LOW);
   digitalWrite(5, LOW);
   digitalWrite(10, HIGH);
-  
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
   //
   // Print preamble
   //
@@ -120,11 +125,11 @@ void setup(void)
   SPI.begin();
   radio.begin();
   network.begin(/*channel*/ 100, /*node address*/ this_node );
-  
+
   //
   // start the Ethernet connection and the server:
   //
-  
+
   Ethernet.begin(mac, ip, gateway, subnet);
   server.begin();
   Serial.print("server is at ");
@@ -137,7 +142,7 @@ void loop(void)
 {
   // Pump the network regularly
   network.update();
-  
+
   EthernetClient client = server.available();
   if (client) {
     while (client.connected()) {   
@@ -155,7 +160,7 @@ void loop(void)
         if (c == '\n') {          
           Serial.println(readString); //print to serial monitor for debuging
 
-          client.println("HTTP/1.1 200 OK"); //send new page
+            client.println("HTTP/1.1 200 OK"); //send new page
           client.println("Content-Type: text/html");
           client.println();     
           client.println("<HTML>");
@@ -180,11 +185,11 @@ void loop(void)
           client.println("Door is: ");
           client.println(doorStatus);    
           client.println("<br />");  
- //         client.println("<a href=\"/?button1on\"\">Turn On LED</a>");
-  //        client.println("<a href=\"/?button1off\"\">Turn Off LED</a><br />");   
-  //        client.println("<br />");     
-   //       client.println("LED is: ");
-   //       client.println(ledOnOff);
+          //         client.println("<a href=\"/?button1on\"\">Turn On LED</a>");
+          //        client.println("<a href=\"/?button1off\"\">Turn Off LED</a><br />");   
+          //        client.println("<br />");     
+          //       client.println("LED is: ");
+          //       client.println(ledOnOff);
           client.println("<br />");
           client.println("<br />");
           client.println("<a href=\"/?button2on\"\">Relay On</a>");
@@ -194,11 +199,11 @@ void loop(void)
           client.println(onOff);
           client.println("<br />");
           client.println("<br />");
- //         client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
-//          client.println("<a href=\"/?button3off\"\">Check Door Status</a><br />");
-  //        client.println("<br />");
-  //        client.println("Door is: ");
-   //       client.println(doorStatus);    
+          //         client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
+          //          client.println("<a href=\"/?button3off\"\">Check Door Status</a><br />");
+          //        client.println("<br />");
+          //        client.println("Door is: ");
+          //       client.println(doorStatus);    
           client.println("<p>Created by Oscar Bjorkman</p>");  
           client.println("<br />"); 
           client.println("</BODY>");
@@ -208,20 +213,20 @@ void loop(void)
           //stopping client
           client.stop();
           //controls the Arduino if you press the buttons
- //         if (readString.indexOf("?button1on") >0){
- //           messageToBeSent = 1;
- //           ledOnOff = "On";
- //           printf("LED ON Pressed \n");
- //           printf("To be sent: %i", messageToBeSent);
- //           to = 02;
- //         }
- //         if (readString.indexOf("?button1off") >0){
- //           messageToBeSent = 0;
- //           ledOnOff = "Off";
- //           printf("LED OFF Pressed \n");
- //           printf("To be sent: %i", messageToBeSent);
- //           to = 02;
-  //        }
+          //         if (readString.indexOf("?button1on") >0){
+          //           messageToBeSent = 1;
+          //           ledOnOff = "On";
+          //           printf("LED ON Pressed \n");
+          //           printf("To be sent: %i", messageToBeSent);
+          //           to = 02;
+          //         }
+          //         if (readString.indexOf("?button1off") >0){
+          //           messageToBeSent = 0;
+          //           ledOnOff = "Off";
+          //           printf("LED OFF Pressed \n");
+          //           printf("To be sent: %i", messageToBeSent);
+          //           to = 02;
+          //        }
           // Relay control
           if (readString.indexOf("?button2on") >0){
             digitalWrite(relay, HIGH);      // sends power to relay which creates circuit
@@ -240,35 +245,35 @@ void loop(void)
           if (readString.indexOf("?button3") >0){
             messageToBeSent = 9;
             to = 02;
-              Serial.println("Check Door");
+            Serial.println("Check Door");
           }
           //clearing string for next read
           delay(50);
-          
+
           readString=""; 
 
-//          // door status
+          //          // door status
 
-//          long duration; 
-//          long distance;
-//          digitalWrite(trigPin, LOW);  
-//          delayMicroseconds(2);
-//          digitalWrite(trigPin, HIGH);
-//          delayMicroseconds(10); 
-//          digitalWrite(trigPin, LOW);
-//          duration = pulseIn(echoPin, HIGH);
-//          distance = (duration/2) / 29.1;
-//          if (distance < 4) {  // LED On/Off loop
-//            digitalWrite(uled, HIGH); 
-//            digitalWrite(uled2, LOW);
-//            doorStatus = "Closed";
-//          }
-//          else {
-//            digitalWrite(uled, LOW);
-//            digitalWrite(uled2, HIGH);
-//            doorStatus = "Open";
-//          }
-//          delay(500); 
+          //          long duration; 
+          //          long distance;
+          //          digitalWrite(trigPin, LOW);  
+          //          delayMicroseconds(2);
+          //          digitalWrite(trigPin, HIGH);
+          //          delayMicroseconds(10); 
+          //          digitalWrite(trigPin, LOW);
+          //          duration = pulseIn(echoPin, HIGH);
+          //          distance = (duration/2) / 29.1;
+          //          if (distance < 4) {  // LED On/Off loop
+          //            digitalWrite(uled, HIGH); 
+          //            digitalWrite(uled2, LOW);
+          //            doorStatus = "Closed";
+          //          }
+          //          else {
+          //            digitalWrite(uled, LOW);
+          //            digitalWrite(uled2, HIGH);
+          //            doorStatus = "Open";
+          //          }
+          //          delay(500); 
 
         }
       }
@@ -297,7 +302,7 @@ void loop(void)
       break;
     };
   }
-  
+
   int sending;
 
   // Send a ping to the next node every 'interval' ms
@@ -308,39 +313,42 @@ void loop(void)
 
     // Who should we send to?
     // By default, send out
-    
-//    if ( sending == 2) {
-//      to = 02;
-//      sending = 5; 
-//    }
-//    else {
-//       to = 05;
-//       sending = 2; 
-//    }
-    
-//    // Or if we have active nodes,
-//    if ( num_active_nodes )
-//    {
-//      // Send to the next active node
-//      to = active_nodes[next_ping_node_index++];
-//
-//      // Have we rolled over?
-//      if ( next_ping_node_index > num_active_nodes )
-//      {
-//        // Next time start at the beginning
-//        next_ping_node_index = 02;
-//
-//        // This time, send to node 02.
-//        to = 05;
-//      }
-//    }
+
+    //    if ( sending == 2) {
+    //      to = 02;
+    //      sending = 5; 
+    //    }
+    //    else {
+    //       to = 05;
+    //       sending = 2; 
+    //    }
+
+    //    // Or if we have active nodes,
+    //    if ( num_active_nodes )
+    //    {
+    //      // Send to the next active node
+    //      to = active_nodes[next_ping_node_index++];
+    //
+    //      // Have we rolled over?
+    //      if ( next_ping_node_index > num_active_nodes )
+    //      {
+    //        // Next time start at the beginning
+    //        next_ping_node_index = 02;
+    //
+    //        // This time, send to node 02.
+    //        to = 05;
+    //      }
+    //    }
 
     bool ok;
 
     // nodes send a 'T' ping
     if ( this_node == 00 && to == 02 )
       ok = send_T(to);
-    
+
+    if ( this_node == 02 && to == 00 )
+      ok = send_T(to);      
+
     if ( this_node == 00 && to == 05 )
       ok = send_T(to);
 
@@ -348,7 +356,7 @@ void loop(void)
     if ( this_node == 00) {
       ok = send_N(to);
     }
-    
+
     // Notify us of the result
     if (ok)
     {
@@ -378,7 +386,7 @@ bool send_T(uint16_t to)
 
   // The 'T' message that contains info on what to control
   unsigned long message = messageToBeSent;                                       // message  being  sent  between  nodes
-   
+
   printf_P(PSTR("---------------------------------\n\r"));
   printf_P(PSTR("%lu: APP Sending %lu to 0%o...\n\r"),millis(),message,to);
   return network.write(header,&message,sizeof(unsigned long));
@@ -432,6 +440,38 @@ void handle_T(RF24NetworkHeader& header)
     digitalWrite(relay, LOW);
     printf("Relay Off \n"); 
   }
+  if(message == 9) {                 // Door 
+    long duration; 
+    long distance;
+    digitalWrite(trigPin, LOW);  
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10); 
+    digitalWrite(trigPin, LOW);
+    duration = pulseIn(echoPin, HIGH);
+    distance = (duration/2) / 29.1;
+    printf("Distance: %i", distance);
+    if (distance < 4) {  // LED On/Off loop
+      printf("Door Closed \n");
+      doorStatus = "Closed";
+      messageToBeSent = 10;
+      to = 00;
+    }
+    else {
+      printf("Door Open \n");
+      doorStatus = "Open";
+      messageToBeSent = 11;
+      to = 00;
+    }
+  }
+  if(message == 10) {
+    doorStatus = "Closed";
+    printf("Door Closed Recieved \n");
+  }
+  if(message == 11) {
+    doorStatus = "Open";
+    printf("Door Open Recieved \n");
+  }
   else {                             // If there is an error is transmission
     printf("Message was invalid");
   }  
@@ -473,4 +513,6 @@ void add_node(uint16_t node)
 }
 
 // vim:ai:cin:sts=2 sw=2 ft=cpp
+
+
 
