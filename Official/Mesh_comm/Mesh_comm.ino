@@ -191,6 +191,8 @@ void loop(void)
           client.println(onOff);
           client.println("<br />");
           client.println("<br />");
+          client.println("<a href=\"/?button3\"\">Check Door Status</a><br />");
+          client.println("<br />");
           client.println("Door is: ");
           client.println(doorStatus);    
           client.println("<p>Created by Oscar Bjorkman</p>");  
